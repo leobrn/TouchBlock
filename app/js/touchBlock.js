@@ -5,7 +5,9 @@
         posMoveX = 0,
         posFinalX = 0,
         posCurrentY = 0,
-        posMoveY = 0
+        posMoveY = 0,
+        nextTrf = 0,
+        prevTrf = 0
     const trfRegExp = /[-0-9.]+(?=px)/,
         getEvent = function (event) {
             let evt = undefined
@@ -25,8 +27,11 @@
         const settings = {
             elementID: '',
             touchWidth: 0,
+            isSlider: false,
+            slideDefault: 0,
             threshold: .3,
             transitionSpeed: .5,
+            jerking: true,
             executeBeforeStart: true,
             executeBeforeAction: true,
             executeAtClick: true
@@ -35,7 +40,9 @@
                 posThresholdX: 0,
                 isSwipe: false,
                 isClick: false,
-                isScroll: false
+                isScroll: false,
+                slideIndex: 0,
+                slidesLength: 0
             },
             touchStart = function (event) {
                 const elEvent = getElement(event)
@@ -45,6 +52,12 @@
                 if (!resultExecute) { return }
                 let evt = getEvent(event)
                 if (!evt) { return }
+                const settings = this.settings,
+                    cache = settings.cache
+                if (settings.isSlider) {
+                    nextTrf = (cache.slideIndex + 1) * -settings.touchWidth
+                    prevTrf = (cache.slideIndex - 1) * -settings.touchWidth
+                }
                 posInitX = posCurrentX = evt.clientX
                 posCurrentY = evt.clientY
                 this.element.style.transition = ''
@@ -77,7 +90,30 @@
                     resultExecute = (typeof executeBeforeAction === "function" ? executeBeforeAction(this) : executeBeforeAction)
                 if (!resultExecute) { return }
                 if (cache.isScroll) { return }
-                if (posInitX > posCurrentX && transform < cache.posThresholdX || posInitX < posCurrentX && transform > cache.posThresholdX) {
+                if (cache.slideIndex === 0 && settings.isSlider) {
+                    if (posInitX < posCurrentX) {
+                        if (settings.jerking) {
+                            prevTrf = cache.posThresholdX
+                        } else {
+                            this.swipe(undefined, undefined, 0)
+                            return
+                        }
+                    }
+                }
+                let slidesLength = cache.slidesLength
+                if (cache.slideIndex === --slidesLength) {
+                    if (posInitX > posCurrentX) {
+                        if (settings.jerking) {
+                            nextTrf = nextTrf < 0 ? nextTrf + cache.posThresholdX : cache.posThresholdX
+                        } else {
+                            this.swipe(undefined, undefined, slidesLength)
+                            return
+                        }
+                    }
+                }
+                const compareLeft = settings.isSlider ? nextTrf : cache.posThresholdX,
+                    compareRight = settings.isSlider ? prevTrf : cache.posThresholdX
+                if (posInitX > posCurrentX && transform < compareLeft || posInitX < posCurrentX && transform > compareRight) {
                     touchEnd(event)
                     return
                 }
@@ -101,12 +137,22 @@
                 if (Math.abs(posFinalX) > cache.posThresholdX) {
                     if (posInitX < posCurrentX) {
                         close = true
+                        if (cache.slideIndex > 0) {
+                            cache.slideIndex--
+                        }
                     } else if (posInitX > posCurrentX) {
                         close = false
+                        if (cache.slideIndex < cache.slidesLength - 1) {
+                            cache.slideIndex++
+                        }
                     }
                 }
                 if (posInitX !== posCurrentX) {
-                    this.swipe(close)
+                    if (settings.isSlider) {
+                        this.swipe(undefined, undefined, cache.slideIndex)
+                    } else {
+                        this.swipe(close)
+                    }
                     cache.isClick = false
                 } else {
                     cache.isClick = true
@@ -118,6 +164,8 @@
 
         Object.assign(settings, options)
         cache.posThresholdX = settings.touchWidth * settings.threshold
+        cache.slidesLength = settings.isSlider ? doc.querySelectorAll('.touch-block__slide').length : 0
+        cache.slideIndex = settings.slideDefault > 0 ? settings.slideDefault : cache.slideIndex
         settings.cache = cache
         const element = doc.getElementById(settings.elementID)
         this.element = element
@@ -127,12 +175,18 @@
         element.addEventListener('touchstart', touchStart, { passive: true })
         element.addEventListener('mousedown', touchStart)
         element.addEventListener('click', touchEnd)
+        if (settings.isSlider) {
+            this.swipe(undefined, undefined, settings.slideDefault)
+        }
     }
-    TouchBlock.prototype.swipe = function (valueDefault = false, elDefault = undefined) {
+    TouchBlock.prototype.swipe = function (valueDefault = false, elDefault = undefined, slideIndex = undefined) {
         const settings = this.settings,
+            cache = settings.cache,
             element = elDefault ? elDefault : this.element
+        let index = slideIndex || cache.slideIndex,
+            factor = settings.isSlider ? index : 1
         element.style.transition = `transform ${settings.transitionSpeed}s ease`
-        element.style.transform = `translate3d(-${valueDefault ? 0 : settings.touchWidth}px, 0px, 0px)`
+        element.style.transform = `translate3d(-${valueDefault ? 0 : settings.touchWidth * factor}px, 0px, 0px)`
     }
     win.TouchBlock = TouchBlock
 })(window, document)

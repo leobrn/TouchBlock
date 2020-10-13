@@ -1,0 +1,56 @@
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+* {
+    /*! Запрет выделения текста start */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    /*! Запрет выделения текста end */
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0) // Цвет подсветки ссылки при касании
+}
+
+a {
+    text-decoration: none;
+    -webkit-touch-callout: none; // Блокировка контекстного меню при удержании на ссылке
+}
+
+body {
+    min-width: 320px;
+    background-color: #F5F5F5;
+    font-family: sans-serif;
+    color: #03A6FD;
+    font-size: 20px;
+    font-weight: 500;
+    overflow-x: hidden;
+}
+
+.main{
+    margin: 20px 0;
+}
+
+.container {
+    padding: 0 20px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.photo{
+    max-height: 120px;
+    margin-bottom: 20px;
+}
+
+@import 'touchBlock';

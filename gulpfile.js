@@ -25,7 +25,7 @@ gulp.task('js', () => {
 })
 
 gulp.task('minjs', () => {
-    return gulp.src('app/js/slideBlock.js')
+    return gulp.src('app/js/touchBlock.js')
         .pipe(minify({
             ext: {
                 min: '.min.js'
