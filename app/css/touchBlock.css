@@ -23,3 +23,35 @@
     transition-property: transform;
     text-align: center;
 }
+
+.touch-block__pagination {
+    position: absolute;
+    text-align: center;
+    z-index: 10;
+}
+
+.touch-block__pagination-numbers {
+    position: relative;
+    width: 100%;
+}
+
+.touch-block__pagination-circles {
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+}
+
+.touch-block__pagination-circle {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 100%;
+    background: #000;
+    opacity: 0.3;
+    margin: 0 5px;
+}
+
+.touch-block__pagination-circle--active {
+    opacity: 1;
+    background: #03A6FD;
+}

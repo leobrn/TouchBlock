@@ -21,20 +21,46 @@
         getElement = function (event) {
             const element = event.currentTarget
             return element.id.search('touchBlock') !== -1 ? element : undefined
+        },
+        addPagination = function (obj) {
+            const { isSlider, pagination, cache } = obj.settings,
+                paginationElement = cache.paginationElement
+            if (!paginationElement || !isSlider) { return }
+            if (pagination === 'numbers') {
+                paginationElement.classList.add('touch-block__pagination-numbers')
+                paginationElement.innerHTML = `
+                <span class="touch-block__pagination-current">${cache.slideIndex + 1}</span>
+                <span class="touch-block__pagination-slash">/</span>
+                <span class="touch-block__pagination-total">${cache.slidesLength}</span>`
+            } else if (pagination === 'circles') {
+                paginationElement.classList.add('touch-block__pagination-circles')
+                let i = 0,
+                    strings = []
+                while (i <= cache.slidesLength - 1) {
+                    let classActive = ''
+                    if (i === cache.slideIndex) {
+                        classActive = 'touch-block__pagination-circle--active'
+                    }
+                    strings.push(`<span class="touch-block__pagination-circle ${classActive}"></span>`)
+                    i++
+                }
+                paginationElement.innerHTML = strings.join('')
+            }
         }
 
     const TouchBlock = function (options) {
         const settings = {
             elementID: '',
             touchWidth: 0,
-            isSlider: false,
-            slideDefault: 0,
             threshold: .3,
             transitionSpeed: .5,
-            jerking: true,
             executeBeforeStart: true,
             executeBeforeAction: true,
-            executeAtClick: true
+            executeAtClick: true,
+            isSlider: false,
+            slideDefault: 0,
+            pagination: 'null', //numbers, circles
+            jerking: true
         },
             cache = {
                 posThresholdX: 0,
@@ -42,7 +68,8 @@
                 isClick: false,
                 isScroll: false,
                 slideIndex: 0,
-                slidesLength: 0
+                slidesLength: 0,
+                paginationElement: undefined
             },
             touchStart = function (event) {
                 const elEvent = getElement(event)
@@ -166,6 +193,7 @@
         cache.posThresholdX = settings.touchWidth * settings.threshold
         cache.slidesLength = settings.isSlider ? doc.querySelectorAll('.touch-block__slide').length : 0
         cache.slideIndex = settings.slideDefault > 0 ? settings.slideDefault : cache.slideIndex
+        cache.paginationElement = document.querySelector('.touch-block__pagination')
         settings.cache = cache
         const element = doc.getElementById(settings.elementID)
         this.element = element
@@ -187,6 +215,7 @@
             factor = settings.isSlider ? index : 1
         element.style.transition = `transform ${settings.transitionSpeed}s ease`
         element.style.transform = `translate3d(-${valueDefault ? 0 : settings.touchWidth * factor}px, 0px, 0px)`
+        addPagination(this)
     }
     win.TouchBlock = TouchBlock
 })(window, document)
