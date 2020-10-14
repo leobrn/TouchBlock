@@ -6,3 +6,8 @@ const touchBlock = new TouchBlock({
     isSlider: true,
     pagination: 'numbers'
 })
+
+window.addEventListener('resize', event => {
+    touchBlock.settings.touchWidth = slide.offsetWidth
+    touchBlock.swipe(false, undefined, touchBlock.settings.cache.slideIndex)
+})
