@@ -7,7 +7,8 @@
         posCurrentY = 0,
         posMoveY = 0,
         nextTrf = 0,
-        prevTrf = 0
+        prevTrf = 0,
+        transition = true
     const trfRegExp = /[-0-9.]+(?=px)/,
         getEvent = function (event) {
             let evt = undefined
@@ -83,6 +84,7 @@
                 const settings = this.settings,
                     cache = settings.cache
                 if (!cache.allowSwipe) { return }
+                transition = true
                 if (settings.isSlider) {
                     nextTrf = (cache.slideIndex + 1) * -settings.touchWidth
                     prevTrf = (cache.slideIndex - 1) * -settings.touchWidth
@@ -148,6 +150,7 @@
                 const compareLeft = settings.isSlider ? nextTrf : cache.posThresholdX,
                     compareRight = settings.isSlider ? prevTrf : cache.posThresholdX
                 if (posInitX > posCurrentX && transform < compareLeft || posInitX < posCurrentX && transform > compareRight) {
+                    transition = false
                     touchEnd(event)
                     return
                 }
@@ -204,20 +207,23 @@
             }.bind(this)
 
         Object.assign(settings, options)
-        cache.posThresholdX = settings.touchWidth * settings.threshold
-        cache.slidesLength = settings.isSlider ? doc.querySelectorAll('.touch-block__slide').length : 0
-        cache.slideIndex = settings.slideDefault > 0 ? settings.slideDefault : cache.slideIndex
-        cache.paginationElement = document.querySelector('.touch-block__pagination')
-        settings.cache = cache
         const element = doc.getElementById(settings.elementID)
+        if (!element) { return }
+        cache.posThresholdX = settings.touchWidth * settings.threshold
+        cache.slidesLength = settings.isSlider ? element.querySelectorAll('.touch-block__slide').length : 0
+        cache.slideIndex = settings.slideDefault > 0 ? settings.slideDefault : cache.slideIndex
+        cache.paginationElement = element.parentElement.querySelector(`.touch-block__pagination`)
+        settings.cache = cache
         this.element = element
         this.settings = settings
-        if (!element) { return }
         element.style.transform = 'translate3d(0px, 0px, 0px)'
         element.addEventListener('touchstart', touchStart, { passive: true })
         element.addEventListener('mousedown', touchStart)
         element.addEventListener('click', touchEnd)
         if (settings.isSlider) {
+            element.addEventListener('transitionend', function () {
+                this.settings.cache.allowSwipe = true
+            }.bind(this))
             this.swipe(false, undefined, settings.slideDefault)
         }
     }
@@ -227,7 +233,9 @@
             element = elDefault ? elDefault : this.element
         let index = slideIndex || cache.slideIndex,
             factor = settings.isSlider ? index : 1
-        element.style.transition = `transform ${settings.transitionSpeed}s ease`
+        if (transition) {
+            element.style.transition = `transform ${settings.transitionSpeed}s ease`
+        }
         element.style.transform = `translate3d(-${valueDefault ? 0 : settings.touchWidth * factor}px, 0px, 0px)`
         addPagination(this)
         cache.allowSwipe = true
