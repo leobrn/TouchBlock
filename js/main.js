@@ -1,6 +1,6 @@
 const slide = document.querySelector('.touch-block__slide')
 
-const touchBlockNumb= new TouchBlock({
+const touchBlockNumb = new TouchBlock({
     elementID: 'touchBlock_numbers',
     touchWidth: slide.offsetWidth,
     isSlider: true,
@@ -18,6 +18,8 @@ const touchBlockCirc = new TouchBlock({
 
 
 window.addEventListener('resize', event => {
-    touchBlock.settings.touchWidth = slide.offsetWidth
-    touchBlock.swipe(false, undefined, touchBlock.settings.cache.slideIndex)
+    touchBlockNumb.settings.touchWidth = slide.offsetWidth
+    touchBlockNumb.swipe(false, undefined, touchBlockNumb.settings.cache.slideIndex)
+    touchBlockCirc.settings.touchWidth = slide.offsetWidth
+    touchBlockCirc.swipe(false, undefined, touchBlockNumb.settings.cache.slideIndex)
 })
