@@ -57,7 +57,7 @@ class TouchBlock {
             element = parentBlock.querySelector('.touch-block__slides')
             cache.parentBlock = parentBlock
         } else {
-            element = doc.getElementById(settings.elementID)
+            element = document.getElementById(settings.elementID)
         }
         return element
     }
