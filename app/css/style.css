@@ -53,6 +53,71 @@ img {
     margin-bottom: 20px;
 }
 
+.actions__item {
+    border-bottom: 1px solid #DCDCDC;
+    display: flex;
+    flex-wrap: nowrap;
+    position: relative;
+    min-height: 200px;
+}
+
+.actions__item-inner {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    width: 100%;
+    z-index: 2;
+    transition: transform 0.3s ease 0s;
+    transform: translate3d(0px, 0px, 0px);
+    transition-property: transform;
+}
+
+.actions__item-inner:active {
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
+}
+
+.actions__item-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.actions__item-action {
+    min-width: 200px;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 10px;
+    background-color: #DCDCDC;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #fff;
+}
+
+.actions__item-action:active {
+    opacity: 0.3;
+    transition: all 0.3 ease;
+}
+
+.arrows {
+    fill: #03A6FD;
+    width: 100px;
+}
+
 .touch-block {
     position: relative;
     margin: 0 auto;

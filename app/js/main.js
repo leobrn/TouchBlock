@@ -1,4 +1,7 @@
-const slide = document.querySelector('.touch-block__slide')
+const slide = document.querySelector('.touch-block__slide'),
+    action = document.querySelector('.actions__item-action'),
+    touchItems = []
+
 let forward = true
 
 const touchBlockNumb = new TouchBlock({
@@ -18,6 +21,33 @@ const touchBlockCirc = new TouchBlock({
     jerkingEdge: false
 })
 
+const closeActions = obj => {
+    const { element, cache } = obj
+    if (!element) { return true }
+    let active = (element.dataset.active === 'true')
+    if (!active && !cache.isScroll) {
+        const activeElements = document.querySelectorAll('.actions__item-inner[data-active="true"]')
+        activeElements.forEach(item => {
+            item.dataset.active = false
+            obj.swipe(null, item, true)
+        })
+        element.dataset.active = true
+    }
+    return true
+}
+
+const createTouchActions = () => {
+    const actionsItems = document.querySelectorAll('.actions__item-inner')
+    actionsItems.forEach(item => {
+        touchItems.push(new TouchBlock({
+            elementID: item.id,
+            touchWidth: action.offsetWidth,
+            executeBeforeAction: closeActions
+        }))
+    })
+}
+
+createTouchActions()
 
 window.addEventListener('resize', event => {
     touchBlockNumb.settings.touchWidth = slide.offsetWidth
