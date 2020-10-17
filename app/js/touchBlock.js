@@ -177,6 +177,15 @@ class TouchBlock {
         vars.posCurrentX = mainEvent.clientX
         vars.posMoveY = vars.posCurrentY - mainEvent.clientY
         vars.posCurrentY = mainEvent.clientY
+        if (!cache.isSwipe && !cache.isScroll) {
+            let posY = Math.abs(vars.posMoveY)
+            if (posY > 7 || vars.posMoveX === 0) {
+                cache.isScroll = true
+                cache.allowSwipe = false
+            } else if (posY < 7) {
+                cache.isSwipe = true
+            }
+        }
         const resultExecute = (typeof executeBeforeAction === "function"
             ? executeBeforeAction(this) : executeBeforeAction)
         if (!resultExecute || cache.isScroll) { return }
@@ -223,7 +232,7 @@ class TouchBlock {
         element.removeEventListener('touchend', this.touchEnd)
         element.removeEventListener('mouseup', this.touchEnd)
         const eventElement = this.#getEventElement(event)
-        if (!eventElement || !cache.allowSwipe) { return }
+        if (!eventElement) { return }
         if (cache.isScroll) {
             cache.allowSwipe = true
             cache.isScroll = false
