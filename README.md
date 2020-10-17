@@ -69,17 +69,17 @@ settings = {
     jerkingEdge: true
 ```
 
-* `elementID`: 
-* `touchWidth`: 
-* `threshold`: 
-* `transitionSpeed`: 
-* `executeBeforeStart`: 
-* `executeBeforeAction`: 
-* `executeAtClick`:
-* `isSlider`: 
-* `slideDefault`: 
-* `pagination`:  
-* `jerkingEdge`:  
+* `elementID`: The element ID which the user will be sliding 
+* `touchWidth`: Element / slide width
+* `threshold`: Response threshold
+* `transitionSpeed`: Transition Speed
+* `executeBeforeStart`: You can pass a function to be executed in 'touchStart' or cancel execution by passing false
+* `executeBeforeAction`: You can pass a function to be executed in 'touchAction' or cancel execution by passing false
+* `executeAtClick`: You can pass a function to be executed on 'touchEnd' on click event
+* `isSlider`: Activate slider functionality by specifying true
+* `slideDefault`: Default slider
+* `pagination`: If the value is 1-numbers, if the value is 2-circles
+* `jerkingEdge`: Twitching effect when pulling left on the first slide and right on the last slide (isSlider = true)
 
 ## Public Methods
 
@@ -102,19 +102,31 @@ touchBlockNumb.swipe(2)
 ### - How can i implement auto-flipping slides?
 
 ```javascript
+const slide = document.querySelector('.touch-block__slide')
+let forward = true
+
+const touchBlockCirc = new TouchBlock({
+    elementID: 'touchBlockCirc',
+    touchWidth: slide.offsetWidth,
+    executeBeforeStart: false,
+    isSlider: true,
+    pagination: 2,
+    jerkingEdge: false
+})
+
 window.addEventListener('load', event => {
     setInterval(() => {
-        if (touchBlockNumb.cache.slideIndex === touchBlockNumb.cache.slidesLength - 1) {
+        if (touchBlockCirc.cache.slideIndex === touchBlockCirc.cache.slidesLength - 1) {
             forward = false
-        } else if (touchBlockNumb.cache.slideIndex === 0) {
+        } else if (touchBlockCirc.cache.slideIndex === 0) {
             forward = true
         }
         if (forward) {
-            touchBlockNumb.cache.slideIndex++
+            touchBlockCirc.cache.slideIndex++
         } else {
-            touchBlockNumb.cache.slideIndex--
+            touchBlockCirc.cache.slideIndex--
         }
-        touchBlockNumb.swipe(touchBlockNumb.cache.slideIndex)
+        touchBlockCirc.swipe(touchBlockCirc.cache.slideIndex)
     }, 2000)
 })
 ```
