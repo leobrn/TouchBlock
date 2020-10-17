@@ -94,11 +94,12 @@ class TouchBlock {
     }
 
     #initSlider() {
-        const { settings, element } = this
+        const { settings, cache, element } = this
         if (!settings.isSlider) { return }
-        const setAllowSwipe = () => { this.cache.allowSwipe = true },
+        const setAllowSwipe = () => { cache.allowSwipe = true },
             allowSwipe = setAllowSwipe.bind(this)
         element.addEventListener('transitionend', allowSwipe)
+        cache.slideIndex = settings.slideDefault
         this.swipe(settings.slideDefault)
     }
 
@@ -263,7 +264,7 @@ class TouchBlock {
             if (settings.isSlider) {
                 this.swipe(cache.slideIndex)
             } else {
-                this.swipe(null, null, close)
+                this.swipe(null, close, null)
             }
             cache.isClick = false
         } else {
@@ -276,9 +277,16 @@ class TouchBlock {
         }
     }
 
-    swipe(slideIndex = null, elementDefault = null, valueDefault = false) {
+    swipe(slideIndex = null, valueDefault = false, elementDefault = null) {
         const { settings, cache } = this,
             element = elementDefault ? elementDefault : this.element
+        if (settings.isSlider && slideIndex !== null && slideIndex !== cache.slideIndex) {
+            if (slideIndex < 0 || slideIndex > cache.slidesLength - 1) {
+                return
+            } else {
+                cache.slideIndex = slideIndex
+            }
+        }
         let index = slideIndex || cache.slideIndex,
             factor = settings.isSlider ? index : 1
         element.style.transition = `transform ${settings.transitionSpeed}s ease`

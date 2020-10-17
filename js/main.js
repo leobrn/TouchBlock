@@ -29,7 +29,7 @@ const closeActions = obj => {
         const activeElements = document.querySelectorAll('.actions__item-inner[data-active="true"]')
         activeElements.forEach(item => {
             item.dataset.active = false
-            obj.swipe(null, item, true)
+            obj.swipe(null, true, item)
         })
         element.dataset.active = true
     }
@@ -51,9 +51,9 @@ createTouchActions()
 
 window.addEventListener('resize', event => {
     touchBlockNumb.settings.touchWidth = slide.offsetWidth
-    touchBlockNumb.swipe(false, undefined, touchBlockNumb.cache.slideIndex)
+    touchBlockNumb.swipe(touchBlockNumb.cache.slideIndex)
     touchBlockCirc.settings.touchWidth = slide.offsetWidth
-    touchBlockCirc.swipe(false, undefined, touchBlockNumb.cache.slideIndex)
+    touchBlockCirc.swipe(touchBlockNumb.cache.slideIndex)
 })
 
 window.addEventListener('load', event => {
