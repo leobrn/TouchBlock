@@ -163,6 +163,8 @@ class TouchBlock {
         element.addEventListener('touchend', this.touchEnd)
         element.addEventListener('mousemove', this.touchAction)
         element.addEventListener('mouseup', this.touchEnd)
+        element.addEventListener('mouseout', this.touchEnd)
+        element.addEventListener('touchcancel', this.touchEnd)
     }
 
     touchAction(event) {
@@ -232,6 +234,8 @@ class TouchBlock {
         element.removeEventListener('mousemove', this.touchAction)
         element.removeEventListener('touchend', this.touchEnd)
         element.removeEventListener('mouseup', this.touchEnd)
+        element.removeEventListener('mouseout', this.touchEnd)
+        element.removeEventListener('touchcancel', this.touchEnd)
         const eventElement = this.#getEventElement(event)
         if (!eventElement) { return }
         if (cache.isScroll) {
