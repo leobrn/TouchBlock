@@ -12,7 +12,9 @@ class TouchBlock {
             isSlider: false,
             slideDefault: 0,
             pagination: null, //1 - numbers, 2 -circles
-            jerkingEdge: true
+            jerkingEdge: true,
+            slidesPerView: 1,
+            spaceBetween: 30
         },
             cache = {
                 posThresholdX: 0,
@@ -43,6 +45,7 @@ class TouchBlock {
         const element = this.mainElement
         if (!element) { return }
         this.element = element
+        this.initWidthSlide()
         this.#initCache()
         this.#initEvent()
         this.#initSlider()
@@ -139,6 +142,20 @@ class TouchBlock {
         vars.prevTrf = 0
     }
 
+    initWidthSlide() {
+        const { settings, cache, element } = this
+        if (!settings.isSlider || settings.slidesPerView <= 1) { return }
+        const slides = element.querySelectorAll('.touch-block__slide'),
+            widthSlider = element.offsetWidth,
+            widthSlide = ((widthSlider - (settings.slidesPerView - 1) * settings.spaceBetween)
+                / settings.slidesPerView)
+        slides.forEach(item => {
+            item.style.width = `${widthSlide}px`
+            item.style.marginRight = `${settings.spaceBetween}px`
+        })
+        settings.touchWidth = widthSlide + settings.spaceBetween
+    }
+
     touchStart(event) {
         this.#resetVars()
         const eventElement = this.#getEventElement(event)
@@ -218,6 +235,13 @@ class TouchBlock {
                 cache.allowSwipe = true
             }
         }
+        if (settings.isSlider && settings.slidesPerView > 1) {
+            if (vars.posInitX > vars.posCurrentX
+                && settings.slidesPerView >= (cache.slidesLength - cache.slideIndex)) {
+                cache.allowSwipe = false
+                return
+            }
+        }
         const swipeRight = settings.isSlider ? vars.nextTrf : cache.posThresholdX,
             swipeLeft = settings.isSlider ? vars.prevTrf : cache.posThresholdX
         if (vars.posInitX > vars.posCurrentX && transform < swipeRight
@@ -244,12 +268,12 @@ class TouchBlock {
             return
         }
         cache.isSwipe = false
-        vars.posFinalX = vars.posInitX - vars.posCurrentX
-        let close = false
         if (!cache.allowSwipe) {
             cache.allowSwipe = true
             return
         }
+        vars.posFinalX = vars.posInitX - vars.posCurrentX
+        let close = false
         if (Math.abs(vars.posFinalX) > cache.posThresholdX) {
             if (vars.posInitX < vars.posCurrentX) {
                 close = true
@@ -293,6 +317,16 @@ class TouchBlock {
         }
         let index = slideIndex || cache.slideIndex,
             factor = settings.isSlider ? index : 1
+        if (settings.isSlider) {
+            if (settings.slidesPerView > 1) {
+                factor = settings.slidesPerView >= (cache.slidesLength - cache.slideIndex)
+                    ? cache.slidesLength - settings.slidesPerView : index
+            } else {
+                factor = index
+            }
+        } else {
+            factor = 1
+        }
         element.style.transition = `transform ${settings.transitionSpeed}s ease`
         element.style.transform = `translate3d(-${valueDefault ? 0 : settings.touchWidth * factor}px, 0px, 0px)`
         this.#initPagination()
