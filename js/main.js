@@ -21,6 +21,19 @@ const touchBlockCirc = new TouchBlock({
     jerkingEdge: false
 })
 
+const activeSlide = obj => {
+    console.log(obj.element, event)
+    return true
+}
+
+const touchBlockMenu = new TouchBlock({
+    elementID: 'touchBlockMenu',
+    isSlider: true,
+    threshold: 0,
+    slidesPerView: 2,
+    executeAtClick: activeSlide
+})
+
 const closeActions = obj => {
     const { element, cache } = obj
     if (!element) { return true }
@@ -54,20 +67,22 @@ window.addEventListener('resize', event => {
     touchBlockNumb.swipe(touchBlockNumb.cache.slideIndex)
     touchBlockCirc.settings.touchWidth = slide.offsetWidth
     touchBlockCirc.swipe(touchBlockNumb.cache.slideIndex)
+    touchBlockMenu.initWidthSlide()
+    touchBlockMenu.swipe(0)
 })
 
 window.addEventListener('load', event => {
-    setInterval(() => {
-        if (touchBlockCirc.cache.slideIndex === touchBlockCirc.cache.slidesLength - 1) {
-            forward = false
-        } else if (touchBlockCirc.cache.slideIndex === 0) {
-            forward = true
-        }
-        if (forward) {
-            touchBlockCirc.cache.slideIndex++
-        } else {
-            touchBlockCirc.cache.slideIndex--
-        }
-        touchBlockCirc.swipe(touchBlockCirc.cache.slideIndex)
-    }, 2000)
+    //setInterval(() => {
+    //     if (touchBlockCirc.cache.slideIndex === touchBlockCirc.cache.slidesLength - 1) {
+    //         forward = false
+    //     } else if (touchBlockCirc.cache.slideIndex === 0) {
+    //         forward = true
+    //     }
+    //     if (forward) {
+    //         touchBlockCirc.cache.slideIndex++
+    //     } else {
+    //         touchBlockCirc.cache.slideIndex--
+    //     }
+    //     touchBlockCirc.swipe(touchBlockCirc.cache.slideIndex)
+    // }, 2000)
 })
