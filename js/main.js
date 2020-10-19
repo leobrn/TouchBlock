@@ -22,7 +22,22 @@ const touchBlockCirc = new TouchBlock({
 })
 
 const activeSlide = obj => {
-    console.log(obj.element, event)
+    event.stopPropagation()
+    event.preventDefault()
+    const target = event.target
+    if (!target.classList.contains('text-slide')) { return false }
+    const { settings, element } = obj,
+        activEl = element.querySelectorAll('.text-slide')
+    activEl.forEach(item => {
+        item.classList.remove('text-slide--active')
+    })
+    target.classList.add('text-slide--active')
+    const current = target.closest(`.touch-block__slide`),
+        slides = element.querySelectorAll('.touch-block__slide'),
+        index = Array.from(slides).indexOf(current),
+        middle = settings.slidesPerView / 2,
+        indexSetup = Math.round(index - middle)
+    obj.swipe(indexSetup)
     return true
 }
 
@@ -30,7 +45,7 @@ const touchBlockMenu = new TouchBlock({
     elementID: 'touchBlockMenu',
     isSlider: true,
     threshold: 0,
-    slidesPerView: 2,
+    slidesPerView: 3,
     executeAtClick: activeSlide
 })
 
@@ -42,7 +57,7 @@ const closeActions = obj => {
         const activeElements = document.querySelectorAll('.actions__item-inner[data-active="true"]')
         activeElements.forEach(item => {
             item.dataset.active = false
-            obj.swipe(null, true, item)
+            item.style.transform = `translate3d(0px, 0px, 0px)`
         })
         element.dataset.active = true
     }
@@ -72,17 +87,17 @@ window.addEventListener('resize', event => {
 })
 
 window.addEventListener('load', event => {
-    //setInterval(() => {
-    //     if (touchBlockCirc.cache.slideIndex === touchBlockCirc.cache.slidesLength - 1) {
-    //         forward = false
-    //     } else if (touchBlockCirc.cache.slideIndex === 0) {
-    //         forward = true
-    //     }
-    //     if (forward) {
-    //         touchBlockCirc.cache.slideIndex++
-    //     } else {
-    //         touchBlockCirc.cache.slideIndex--
-    //     }
-    //     touchBlockCirc.swipe(touchBlockCirc.cache.slideIndex)
-    // }, 2000)
+    setInterval(() => {
+        if (touchBlockCirc.cache.slideIndex === touchBlockCirc.cache.slidesLength - 1) {
+            forward = false
+        } else if (touchBlockCirc.cache.slideIndex === 0) {
+            forward = true
+        }
+        if (forward) {
+            touchBlockCirc.cache.slideIndex++
+        } else {
+            touchBlockCirc.cache.slideIndex--
+        }
+        touchBlockCirc.swipe(touchBlockCirc.cache.slideIndex)
+    }, 2000)
 })
