@@ -292,7 +292,7 @@ class TouchBlock {
             if (settings.isSlider) {
                 this.swipe(cache.slideIndex)
             } else {
-                this.swipe(null, close, null)
+                this.swipe(null, close)
             }
             cache.isClick = false
         } else {
@@ -305,9 +305,8 @@ class TouchBlock {
         }
     }
 
-    swipe(slideIndex = null, valueDefault = false, elementDefault = null) {
-        const { settings, cache } = this,
-            element = elementDefault ? elementDefault : this.element
+    swipe(slideIndex = null, valueDefault = false) {
+        const { settings, cache, element } = this
         if (settings.isSlider && slideIndex !== null && slideIndex !== cache.slideIndex) {
             if (slideIndex < 0 || slideIndex > cache.slidesLength - 1) {
                 return
