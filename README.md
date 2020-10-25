@@ -1,7 +1,7 @@
 # TouchBlock.js
 Interact with blocks using TouchBlock.js
 
-<a href="https://youtu.be/VVCVbbOt_YA" target="_blank">View Video Preview ex.1</a>
+<a href="https://youtu.be/VVCVbbOt_YA" target="_blank">View Video Preview ex.1</a> | <a href="https://youtu.be/2M5cbzAQxfU" target="_blank">View Video Preview ex.2</a>
 
 <a href="https://leobrn.github.io/TouchBlock//" target="_blank">View Demos</a>
 
@@ -66,7 +66,9 @@ settings = {
     isSlider: false,
     slideDefault: 0,
     pagination: null, //1 - numbers, 2 -circles
-    jerkingEdge: true
+    jerkingEdge: true,
+    slidesPerView: 1,
+    spaceBetween: 30
 ```
 
 * `elementID`: The element ID which the user will be sliding 
@@ -80,6 +82,8 @@ settings = {
 * `slideDefault`: Default slider
 * `pagination`: If the value is 1-numbers, if the value is 2-circles
 * `jerkingEdge`: Twitching effect when pulling left on the first slide and right on the last slide (isSlider = true)
+* `slidesPerView`: Number of preview slides
+* `spaceBetween`: Distance between slides
 
 ## Public Methods
 
