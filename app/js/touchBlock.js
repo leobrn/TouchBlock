@@ -9,6 +9,7 @@ class TouchBlock {
         transitionSpeed: 0.5,
         executeBeforeStart: true,
         executeBeforeAction: true,
+        executeBeforeEnd: true,
         executeAtClick: true,
         isSlider: false,
         slideDefault: 0,
@@ -324,19 +325,22 @@ class TouchBlock {
   }
 
   touchEnd(event) {
-    const { settings, cache, vars } = this
+    const { settings, cache, vars } = this,
+      mainElement = this.element
     let element = this.getTargetElement(event)
     if (!element) {
       return
     }
-    element.removeEventListener('touchmove', this.touchAction, {
+
+    mainElement.removeEventListener('touchmove', this.touchAction, {
       passive: true
     })
-    element.removeEventListener('mousemove', this.touchAction)
-    element.removeEventListener('touchend', this.touchEnd)
-    element.removeEventListener('mouseup', this.touchEnd)
-    element.removeEventListener('mouseout', this.touchEnd)
-    element.removeEventListener('touchcancel', this.touchEnd)
+    mainElement.removeEventListener('mousemove', this.touchAction)
+    mainElement.removeEventListener('touchend', this.touchEnd)
+    mainElement.removeEventListener('mouseup', this.touchEnd)
+    mainElement.removeEventListener('mouseout', this.touchEnd)
+    mainElement.removeEventListener('touchcancel', this.touchEnd)
+
     const eventElement = this.#getEventElement(event)
     if (!eventElement) {
       return
@@ -349,6 +353,14 @@ class TouchBlock {
     cache.isSwipe = false
     if (!cache.allowSwipe) {
       cache.allowSwipe = true
+      return
+    }
+    const executeBeforeEnd = settings.executeBeforeEnd,
+      resultExecute =
+        typeof executeBeforeEnd === 'function'
+          ? executeBeforeEnd(this)
+          : executeBeforeEnd
+    if (!resultExecute) {
       return
     }
     vars.posFinalX = vars.posInitX - vars.posCurrentX
